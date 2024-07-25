@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KPI Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>KPI Dashboard</h1>
+    <div id="kpis"></div>
+    <canvas id="kpiChart"></canvas>
+    <script>
+    fetch('YOUR_LAMBDA_API_URL/api/kpis')
+        .then(response => response.json())
+        .then(data => {
+            const kpisDiv = document.getElementById('kpis');
+            data.forEach(kpi => {
+                kpisDiv.innerHTML += `<p>${kpi.name}: ${kpi.value}</p>`;
+            });
+            
+            // Create chart
+            const ctx = document.getElementById('kpiChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(kpi => kpi.name),
+                    datasets: [{
+                        label: 'KPI Values',
+                        data: data.map(kpi => kpi.value),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
